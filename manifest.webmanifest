@@ -1,0 +1,11 @@
+{
+  "name": "Guía de Japón 2026",
+  "short_name": "Japón 2026",
+  "description": "Guía de viaje de Japón con actividades, transportes y mapas esquemáticos sin conexión",
+  "lang": "es-ES",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f4ef",
+  "theme_color": "#173c36"
+}

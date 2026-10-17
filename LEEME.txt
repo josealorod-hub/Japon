@@ -1,0 +1,21 @@
+GUÍA DE JAPÓN 2026 — VERSIÓN PARA INSTALAR EN IPHONE
+
+IMPORTANTE
+La vista previa de la app Archivos de iOS puede bloquear JavaScript. El archivo HTML abierto como vista previa no es una forma fiable de ejecutar botones interactivos. Para que funcionen y para tener una app offline fiable, sirve estos archivos desde una dirección HTTPS y añádela a la pantalla de inicio.
+
+CONTENIDO
+- index.html: guía completa
+- manifest.webmanifest: configuración de instalación
+- service-worker.js: caché para abrir la guía sin conexión después de la primera carga
+
+CONFIGURACIÓN ÚNICA
+1. Publica los tres archivos juntos en un sitio HTTPS estático (por ejemplo, GitHub Pages). No cambies los nombres ni la estructura.
+2. En el iPhone, abre la URL HTTPS publicada en Safari y espera a que cargue la guía con conexión.
+3. Pulsa Compartir > Añadir a pantalla de inicio. Si aparece, activa “Abrir como app”.
+4. Abre la guía desde el nuevo icono y comprueba que funciona. Luego activa modo avión y vuelve a abrirla para verificar el acceso sin conexión.
+
+DATOS Y COPIAS
+Los datos se guardan en el almacenamiento local del navegador y no se sincronizan solos con otros dispositivos. Exporta copias JSON con regularidad. Al borrar datos del sitio o reinstalar puede perderse el almacenamiento local.
+
+LIMITACIÓN
+El service worker no funciona al abrir index.html directamente desde Archivos (file://); los navegadores exigen HTTPS o localhost para registrar el service worker. La publicación inicial necesita conexión, pero después se puede utilizar sin conexión.
