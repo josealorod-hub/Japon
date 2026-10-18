@@ -116,12 +116,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <header class="hero">
   <div class="eyebrow">旅 · Diario de viaje · Otoño 2026</div>
   <h1>Japón, paso a paso</h1>
-  <p>Tu guía personal del 28 de octubre al 18 de noviembre de 2026. Organiza cada jornada, guarda actividades y consulta tu itinerario aunque no tengas conexión.</p>
-  <div class="hero-stats">
-    <div class="stat">📅 <strong>22 días de calendario</strong></div>
-    <div class="stat">🛏️ <strong>20 noches previstas</strong></div>
-    <div class="stat">🗾 <strong>7 etapas</strong></div>
-  </div>
+  <p>28 de octubre a 18 de noviembre de 2026</p>
 </header>
 <main class="wrap">
   <div class="toolbar">
@@ -130,9 +125,17 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <button class="btn" id="exportBtn">⇩ Exportar copia</button>
     <button class="btn" id="importBtn">⇧ Importar copia</button>
     <button class="btn" id="printBtn">Imprimir / PDF</button>
+    <button class="btn" id="appInfoBtn" aria-haspopup="dialog" aria-controls="appInfoModal">App-Info</button>
     <input id="importFile" type="file" accept=".json,application/json" class="hidden">
   </div>
-  <div class="notice"><strong>Uso sin conexión:</strong> esta guía no necesita Internet para consultar ni editar actividades. Los cambios se guardan en este navegador cuando su almacenamiento local está disponible. Como los archivos HTML abiertos directamente pueden tener restricciones según el navegador, exporta copias JSON con frecuencia y antes de cambiar de dispositivo.</div>
+  <div class="modal-backdrop" id="appInfoModal" role="dialog" aria-modal="true" aria-labelledby="appInfoTitle">
+    <div class="modal">
+      <div class="modal-head"><h2 id="appInfoTitle">App-Info · Uso sin conexión</h2><button class="x" id="closeAppInfo" aria-label="Cerrar">×</button></div>
+      <div class="modal-body">
+        <div class="notice"><strong>Uso sin conexión:</strong> esta guía no necesita Internet para consultar ni editar actividades. Los cambios se guardan en este navegador cuando su almacenamiento local está disponible. Como los archivos HTML abiertos directamente pueden tener restricciones según el navegador, exporta copias JSON con frecuencia y antes de cambiar de dispositivo.</div>
+      </div>
+    </div>
+  </div>
   <nav class="tabs" aria-label="Secciones">
     <button class="tab active" data-view="day">Día a día</button>
     <button class="tab" data-view="overview">Etapas</button>
@@ -326,6 +329,29 @@ try{localStorage.setItem(KEY,JSON.stringify(data));setStorage("Almacenamiento lo
 <script>
 // El service worker solo puede instalarse desde HTTPS o localhost; el HTML sigue funcionando si no está disponible.
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) { navigator.serviceWorker.register("./service-worker.js").catch(function(){}); }
+</script>
+<script>
+(function () {
+  const modal = document.getElementById('appInfoModal');
+  const openButton = document.getElementById('appInfoBtn');
+  const closeButton = document.getElementById('closeAppInfo');
+  function openInfo() {
+    modal.classList.add('open');
+    closeButton.focus();
+  }
+  function closeInfo() {
+    modal.classList.remove('open');
+    openButton.focus();
+  }
+  openButton.addEventListener('click', openInfo);
+  closeButton.addEventListener('click', closeInfo);
+  modal.addEventListener('click', function (event) {
+    if (event.target === modal) closeInfo();
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && modal.classList.contains('open')) closeInfo();
+  });
+})();
 </script>
 </body>
 </html>
