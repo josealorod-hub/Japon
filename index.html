@@ -364,17 +364,19 @@ function setMapMode(){
  routeWrap.classList.toggle("hidden",mode!=="google"||key!=="japan");
  routeNote.classList.toggle("hidden",mode!=="google"||key!=="japan");
  if(mode==="google"){
-  frame.src="https://maps.google.com/maps?q="+encodeURIComponent(c.query)+"&output=embed";
+  frame.title="Mapa real de Google Maps";
+  frame.src="https://www.google.com/maps?q="+encodeURIComponent(c.query)+"&output=embed";
   open.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(c.query);
   open.textContent="Abrir en Google Maps";
  }else if(mode==="osm"){
+  frame.title="Mapa real de OpenStreetMap";
   frame.src="https://www.openstreetmap.org/export/embed.html?bbox="+c.bbox+"&layer=mapnik";
   open.href="https://www.openstreetmap.org/#map="+c.zoom+"/"+c.center;
   open.textContent="Abrir en OpenStreetMap";
  }
 }
 document.getElementById("mapMode").addEventListener("change",setMapMode);
-document.getElementById("mapChoice").addEventListener("change",()=>{renderMap();if(document.getElementById("mapMode").value==="online")setMapMode()});document.getElementById("mapSelectedDay").onclick=()=>{const n=activeDay().place.toLowerCase();let id=Object.keys(cityMaps).find(k=>n.includes(k)||k==="kyoto"&&n.includes("kioto")||k==="kinosaki"&&n.includes("kinosaki"));if(!id&&n.includes("vuelo"))id="japan";document.getElementById("mapChoice").value=id||"japan";renderMap()};
+document.getElementById("mapChoice").addEventListener("change",()=>{renderMap();if(document.getElementById("mapMode").value!=="offline")setMapMode()});document.getElementById("mapSelectedDay").onclick=()=>{const n=activeDay().place.toLowerCase();let id=Object.keys(cityMaps).find(k=>n.includes(k)||k==="kyoto"&&n.includes("kioto")||k==="kinosaki"&&n.includes("kinosaki"));if(!id&&n.includes("vuelo"))id="japan";document.getElementById("mapChoice").value=id||"japan";renderMap()};
 
 renderAll();
 try{localStorage.setItem(KEY,JSON.stringify(data));setStorage("Almacenamiento local disponible en este navegador.")}catch(e){setStorage("El navegador no permite guardar automáticamente en este modo. Usa Exportar copia después de editar.")}
