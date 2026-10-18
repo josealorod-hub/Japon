@@ -183,7 +183,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <div class="map-toolbar"><label for="mapChoice"><strong>Mapa:</strong></label><select id="mapChoice"><option value="japan">Japón · ruta completa</option><option value="osaka">Osaka</option><option value="gyokuzoin">Templo de Gyokuzoin</option><option value="kyoto">Kioto</option><option value="kinosaki">Kinosaki Onsen</option><option value="kanazawa">Kanazawa</option><option value="takayama">Takayama</option><option value="tokyo">Tokio</option></select><button class="btn small" id="mapSelectedDay">Ver día seleccionado</button></div>
       <div class="map-toolbar">
         <label for="mapMode"><strong>Vista del mapa:</strong></label>
-        <select id="mapMode"><option value="online">Mapa real OpenStreetMap</option><option value="offline">Mapa esquemático sin conexión</option></select>
+        <select id="mapMode"><option value="osm">Mapa real OpenStreetMap</option><option value="google">Mapa real Google Maps</option><option value="offline">Mapa esquemático sin conexión</option></select>
       </div>
       <div id="onlineMapPanel" class="hidden">
         <div class="map-frame" style="height: min(62vh, 620px); min-height: 360px; position:relative;">
@@ -337,24 +337,32 @@ function renderMap(){const choice=document.getElementById("mapChoice").value;let
  const valid=local.filter(p=>p.lon>=minLon-.02&&p.lon<=maxLon+.02&&p.lat>=minLat-.02&&p.lat<=maxLat+.02);svg=`<svg viewBox="0 0 720 500" role="img" aria-label="${esc(city.title)}"><rect width="720" height="500" fill="#eef1e6"/><g fill="none" stroke="#cbd3c2" stroke-width="10" stroke-linecap="round">${streets}</g><g fill="none" stroke="#fffdf5" stroke-width="6" stroke-linecap="round">${streets}</g><path d="M0 330 Q160 280 260 320 T500 290 T720 310" fill="none" stroke="#9ccbd1" stroke-width="22" opacity=".8"/><path d="M0 330 Q160 280 260 320 T500 290 T720 310" fill="none" stroke="#d7edf0" stroke-width="13"/><path d="M20 460 L700 55" stroke="#b3a58a" stroke-width="5" stroke-dasharray="10 7" opacity=".9"/><text x="22" y="30" font-size="18" font-weight="800" fill="#173c36">${esc(city.title)}</text><text x="22" y="485" font-size="11" fill="#53665f">Mapa esquemático sin conexión · referencias aproximadas</text>${valid.map((p,i)=>{const [x,y]=xy(p.lon,p.lat),color=p.kind==="transport"?"#5279a8":p.kind==="activity"?"#d6a84f":"#b54d3d";return `<g><circle cx="${x}" cy="${y}" r="8" fill="${color}" stroke="white" stroke-width="3"/><text x="${x+10}" y="${y-7}" font-size="11" font-weight="700" fill="#203a32">${esc(p.name.length>24?p.name.slice(0,22)+"…":p.name)}</text></g>`}).join("")}</svg>`;points=valid.map(p=>({name:p.name,desc:p.desc||"Lugar de referencia",kind:p.kind}));}
  document.getElementById("mapCanvas").innerHTML=svg;document.getElementById("mapPointList").innerHTML=points.map(p=>`<div class="map-point"><strong>${esc(p.name)}</strong><span>${esc(p.desc||"")}</span>${p.id?`<br><button class="btn small" data-godate="${esc(p.id)}">Ver etapa</button>`:""}</div>`).join("");document.querySelectorAll("[data-godate]").forEach(b=>b.onclick=()=>{const p=stageCoords.find(x=>x.id===b.dataset.godate);if(p)goDate(places.find(x=>x.id===p.id)?.from||"2026-10-29")});}
 function setMapMode(){
- const online=document.getElementById("mapMode").value==="online";
- document.getElementById("onlineMapPanel").classList.toggle("hidden",!online);
- document.getElementById("offlineMapPanel").classList.toggle("hidden",online);
- if(online){
-   const key=document.getElementById("mapChoice").value;
-   const cityLinks={
-    japan:{bbox:"129.5%2C30%2C141.0%2C46.0",center:"36.2/137.5",zoom:5},
-    osaka:{bbox:"135.40%2C34.62%2C135.58%2C34.78",center:"34.69/135.50",zoom:12},
-    gyokuzoin:{bbox:"135.65%2C34.58%2C135.85%2C34.78",center:"34.65/135.75",zoom:12},
-    kyoto:{bbox:"135.65%2C34.94%2C135.83%2C35.10",center:"35.01/135.76",zoom:12},
-    kinosaki:{bbox:"134.77%2C35.59%2C134.85%2C35.67",center:"35.62/134.81",zoom:14},
-    kanazawa:{bbox:"136.61%2C36.53%2C136.71%2C36.60",center:"36.56/136.66",zoom:13},
-    takayama:{bbox:"137.22%2C36.11%2C137.29%2C36.18",center:"36.14/137.25",zoom:14},
-    tokyo:{bbox:"139.60%2C35.61%2C139.88%2C35.80",center:"35.69/139.76",zoom:11}
-   };
-   const c=cityLinks[key]||cityLinks.japan;
-   document.getElementById("onlineMapFrame").src="https://www.openstreetmap.org/export/embed.html?bbox="+c.bbox+"&layer=mapnik";
-   document.getElementById("openOnlineMap").href="https://www.openstreetmap.org/#map="+c.zoom+"/"+c.center;
+ const mode=document.getElementById("mapMode").value;
+ const offline=mode==="offline";
+ document.getElementById("onlineMapPanel").classList.toggle("hidden",offline);
+ document.getElementById("offlineMapPanel").classList.toggle("hidden",!offline);
+ const key=document.getElementById("mapChoice").value;
+ const cityLinks={
+  japan:{bbox:"129.5%2C30%2C141.0%2C46.0",center:"36.2/137.5",zoom:5,query:"Japan"},
+  osaka:{bbox:"135.40%2C34.62%2C135.58%2C34.78",center:"34.69/135.50",zoom:12,query:"Osaka, Japan"},
+  gyokuzoin:{bbox:"135.65%2C34.58%2C135.85%2C34.78",center:"34.65/135.75",zoom:12,query:"Gyokuzoin Temple, Heguri, Nara, Japan"},
+  kyoto:{bbox:"135.65%2C34.94%2C135.83%2C35.10",center:"35.01/135.76",zoom:12,query:"Kyoto, Japan"},
+  kinosaki:{bbox:"134.77%2C35.59%2C134.85%2C35.67",center:"35.62/134.81",zoom:14,query:"Kinosaki Onsen, Toyooka, Japan"},
+  kanazawa:{bbox:"136.61%2C36.53%2C136.71%2C36.60",center:"36.56/136.66",zoom:13,query:"Kanazawa, Japan"},
+  takayama:{bbox:"137.22%2C36.11%2C137.29%2C36.18",center:"36.14/137.25",zoom:14,query:"Takayama, Gifu, Japan"},
+  tokyo:{bbox:"139.60%2C35.61%2C139.88%2C35.80",center:"35.69/139.76",zoom:11,query:"Tokyo, Japan"}
+ };
+ const c=cityLinks[key]||cityLinks.japan;
+ const frame=document.getElementById("onlineMapFrame");
+ const open=document.getElementById("openOnlineMap");
+ if(mode==="google"){
+  frame.src="https://maps.google.com/maps?q="+encodeURIComponent(c.query)+"&output=embed";
+  open.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(c.query);
+  open.textContent="Abrir en Google Maps";
+ }else if(mode==="osm"){
+  frame.src="https://www.openstreetmap.org/export/embed.html?bbox="+c.bbox+"&layer=mapnik";
+  open.href="https://www.openstreetmap.org/#map="+c.zoom+"/"+c.center;
+  open.textContent="Abrir en OpenStreetMap";
  }
 }
 document.getElementById("mapMode").addEventListener("change",setMapMode);
