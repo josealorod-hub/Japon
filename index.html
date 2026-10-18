@@ -191,6 +191,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
         </div>
         <p class="map-note">Mapa real de OpenStreetMap. Requiere conexión. © OpenStreetMap contributors. Para indicaciones entre puntos, usa el enlace «Abrir mapa real» de abajo.</p>
         <div class="toolbar"><a class="btn" id="openOnlineMap" href="https://www.openstreetmap.org/#map=5/36.2/137.5" target="_blank" rel="noopener noreferrer">Abrir mapa real</a></div>
+        <div class="toolbar" id="fullGoogleRouteWrap">
+          <a class="btn primary" id="fullGoogleRoute" href="https://www.google.com/maps/dir/?api=1&origin=Osaka%2C%20Japan&destination=Tokyo%2C%20Japan&waypoints=Gyokuzoin%20Temple%2C%20Heguri%2C%20Nara%2C%20Japan%7CKyoto%2C%20Japan%7CKinosaki%20Onsen%2C%20Toyooka%2C%20Japan%7CKanazawa%2C%20Japan%7CTakayama%2C%20Gifu%2C%20Japan&travelmode=driving" target="_blank" rel="noopener noreferrer">Ver Japón · Ruta completa en Google Maps</a>
+        </div>
+        <p class="map-note" id="fullGoogleRouteNote">La ruta completa de Google Maps conecta las siete etapas como recorrido por carretera. Para el viaje real en tren, utiliza las indicaciones de transporte público de cada tramo.</p>
       </div>
       <div id="offlineMapPanel">
         <div class="map-frame" id="mapCanvas" aria-label="Mapa esquemático sin conexión"></div>
@@ -355,6 +359,10 @@ function setMapMode(){
  const c=cityLinks[key]||cityLinks.japan;
  const frame=document.getElementById("onlineMapFrame");
  const open=document.getElementById("openOnlineMap");
+ const routeWrap=document.getElementById("fullGoogleRouteWrap");
+ const routeNote=document.getElementById("fullGoogleRouteNote");
+ routeWrap.classList.toggle("hidden",mode!=="google"||key!=="japan");
+ routeNote.classList.toggle("hidden",mode!=="google"||key!=="japan");
  if(mode==="google"){
   frame.src="https://maps.google.com/maps?q="+encodeURIComponent(c.query)+"&output=embed";
   open.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(c.query);
